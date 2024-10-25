@@ -15,7 +15,7 @@ class Finger(StrEnum):
     LThumb = auto()
 
 
-FingerStat = Counter
+type FingerStat = Counter
 type Key = str
 type FingerLayout = dict[Finger, list[Key]]
 
