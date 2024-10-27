@@ -4,10 +4,7 @@
 # 3. переименовать переменные
 
 from config import Finger
-import matplotlib.pyplot as plt
-from enum import StrEnum, auto
 import random
-
 
 def plot_by_stat(statistic: dict[Finger, int]): 
 
@@ -15,17 +12,17 @@ def plot_by_stat(statistic: dict[Finger, int]):
     values = list(statistic.values())
 
     loads2 = [
-        statistic[Finger.RPinky],
-        statistic[Finger.RRing],
-        statistic[Finger.RMiddle],
-        statistic[Finger.RIndex],
+        statistic[Finger.RPinky].values(),
+        statistic[Finger.RRing].values(),
+        statistic[Finger.RMiddle].values(),
+        statistic[Finger.RIndex].values(),
     ]
 
     loads1 = [
-        statistic[Finger.LPinky],
-        statistic[Finger.LRing],
-        statistic[Finger.LMiddle],
-        statistic[Finger.LIndex],
+        statistic[Finger.LPinky].values(),
+        statistic[Finger.LRing].values(),
+        statistic[Finger.LMiddle].values(),
+        statistic[Finger.LIndex].values(),
     ]
     
     labels2 = [
@@ -78,7 +75,6 @@ def plot_by_stat(statistic: dict[Finger, int]):
 
 
 if __name__ == '__main__':
-    
     # пока рандом
     statistic = {member: random.randint(1, 100) for member in Finger}
     plot_by_stat(statistic)
