@@ -2,6 +2,7 @@ import unittest
 
 import fingercalc
 
+
 class TestConfig(unittest.TestCase):
     '''
     @brief Класс для тестирования корректности сформированных данных.
@@ -25,10 +26,11 @@ class TestFingerCalc(unittest.TestCase):
         '''
         @brief Проверка символа на принадлежность к русскому алфавиту.
         '''
-        self.assertTrue(fingercalc.isRussian('w'))
+        self.assertFalse(fingercalc.isRussian('w'))
         self.assertTrue(fingercalc.isRussian('е'))
         self.assertTrue(fingercalc.isRussian('й'))
         pass
+
     def test_get_info_from_file(self):
         '''
         @brief Передать в соответсвующую функцю имя файла (файл небольшой для
@@ -43,5 +45,7 @@ class TestFingerCalc(unittest.TestCase):
             'ц': 4,
         }
         self.assertCountEqual(my_stat, correct_stat)
-if __name__ == "__main__": 
+
+
+if __name__ == "__main__":
     unittest.main()

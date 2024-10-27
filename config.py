@@ -25,18 +25,22 @@ type FingerLayout = dict[Finger, list[Key]]
 # type Key = tuple[str, int]  # Клавиша - штраф
 
 
-def load_layout(fnamne: str) -> FingerLayout:
+def load_layout(fname: str) -> FingerLayout:
     '''
     @brief Загружает toml-конфиг для раскладки из указанного файла.
     '''
-    with open("pyproject.toml", "rb") as f:
+    with open(fname, "rb") as f:
         data = tomllib.load(f)
-    print(data)
-    return data    
+    return data
+
 
 def key_to_finger(layout: FingerLayout) -> dict[Key, Finger]:
     '''
     @brief На основе полученной раскладки формирует словарь `Клавиша-палец`.
     '''
-    data = {a: k for k, v in layout.items() for a in v}
+    data = {
+        key: finger_name
+        for finger_name, info in layout.items()
+        for key in info['keys']
+    }
     return data
