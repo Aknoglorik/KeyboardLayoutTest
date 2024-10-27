@@ -1,5 +1,6 @@
 from enum import StrEnum, auto
 from collections import Counter
+import tomllib
 
 
 class Finger(StrEnum):
@@ -28,11 +29,14 @@ def load_layout(fnamne: str) -> FingerLayout:
     '''
     @brief Загружает toml-конфиг для раскладки из указанного файла.
     '''
-    pass
-
+    with open("pyproject.toml", "rb") as f:
+        data = tomllib.load(f)
+    print(data)
+    return data    
 
 def key_to_finger(layout: FingerLayout) -> dict[Key, Finger]:
     '''
     @brief На основе полученной раскладки формирует словарь `Клавиша-палец`.
     '''
-    pass
+    data = {a: k for k, v in layout.items() for a in v}
+    return data
