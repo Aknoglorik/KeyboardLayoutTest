@@ -1,8 +1,4 @@
-# TODO
-# 1. добавить кнопку переключения c одной раскладки на другую
-# 2. добавить диаграмму ?
-# 3. переименовать переменные
-
+import matplotlib.pyplot as plt
 from config import Finger
 import random
 
@@ -12,17 +8,17 @@ def plot_by_stat(statistic: dict[Finger, int]):
     values = list(statistic.values())
 
     loads2 = [
-        statistic[Finger.RPinky].values(),
-        statistic[Finger.RRing].values(),
-        statistic[Finger.RMiddle].values(),
-        statistic[Finger.RIndex].values(),
+        statistic[Finger.RPinky.value()],
+        statistic[Finger.RRing.value()],
+        statistic[Finger.RMiddle.value()],
+        statistic[Finger.RIndex.value()]
     ]
 
     loads1 = [
-        statistic[Finger.LPinky].values(),
-        statistic[Finger.LRing].values(),
-        statistic[Finger.LMiddle].values(),
-        statistic[Finger.LIndex].values(),
+        statistic[Finger.LPinky.value()],
+        statistic[Finger.LRing.value()],
+        statistic[Finger.LMiddle.value()],
+        statistic[Finger.LIndex.value()],
     ]
     
     labels2 = [
