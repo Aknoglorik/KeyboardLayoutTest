@@ -1,4 +1,4 @@
-[LPinky]
+[lpinky]
 keys = [
 	'ё',
 	'ц',
@@ -6,7 +6,7 @@ keys = [
 	'ф'
 ]
 
-[LRing]
+[lring]
 keys = [
 	'ь',
 	'ъ',
@@ -14,14 +14,14 @@ keys = [
 	'э'
 ]
 
-[LMiddle]
+[lmiddle]
 keys = [
 	'я',
 	'е',
 	'х'
 ]
 
-[LIndex]
+[lindex]
 keys = [
 	'о',
 	'ы',
@@ -29,7 +29,7 @@ keys = [
 	'ю',
 ]
 
-[RIndex]
+[rindex]
 keys = [
 	'з',
 	'л',
@@ -39,21 +39,21 @@ keys = [
 	'м'
 ]
 
-[RMiddle]
+[rmiddle]
 keys = [
 	'к',
 	'т',
 	'п'
 ]
 
-[RRing]
+[rring]
 keys = [
 	'д',
 	'с',
 	'г'
 ]
 
-[RPinky]
+[rpinky]
 keys = [
 	'ч',
 	'р',
