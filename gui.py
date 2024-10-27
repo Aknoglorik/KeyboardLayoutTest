@@ -14,28 +14,28 @@ def plot_by_stat(statistic: dict[Finger, int]):
     keys = list(statistic.keys())
     values = list(statistic.values())
 
-    loads1 = [
+    loads2 = [
         statistic[Finger.RPinky],
         statistic[Finger.RRing],
         statistic[Finger.RMiddle],
         statistic[Finger.RIndex],
     ]
 
-    loads2 = [
+    loads1 = [
         statistic[Finger.LPinky],
         statistic[Finger.LRing],
         statistic[Finger.LMiddle],
         statistic[Finger.LIndex],
     ]
     
-    labels1 = [
+    labels2 = [
         Finger.RPinky,
         Finger.RRing,
         Finger.RMiddle,
         Finger.RIndex,
     ]
 
-    labels2 = [
+    labels1 = [
         Finger.LPinky,
         Finger.LRing,
         Finger.LMiddle,
