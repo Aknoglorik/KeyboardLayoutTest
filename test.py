@@ -1,5 +1,6 @@
 import unittest
 
+import fingercalc
 
 class TestConfig(unittest.TestCase):
     '''
@@ -32,7 +33,7 @@ class TestFingerCalc(unittest.TestCase):
         теста) после сравнить правильность полученных результатов с уже
         известными.
         '''
-        self.assertEqual(fingercalc.get_info_from_file(statistic.update),statistic)
+        self.assertEqual(fingercalc.get_info_from_file('statistic'),0)
         pass
         
     def test_app() -> None:
