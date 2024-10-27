@@ -3,10 +3,13 @@ from config import (
     FingerStat,
     FingerLayout,
     load_layout,
+    key_to_finger,
 )
 from fingercalc import get_info_from_file
 from gui import plot_by_stat
 # from test import test_app
+
+from collections import defaultdict
 
 
 def count_to_score(stat: FingerStat, layout: FingerLayout
@@ -14,7 +17,14 @@ def count_to_score(stat: FingerStat, layout: FingerLayout
     '''
     @brief На основе полученной `статистики` подсчитывает кол-во очков для
     '''
-    pass
+    key_finger = key_to_finger(layout)
+    score = defaultdict(int)
+
+    for key, amount in stat.items():
+        finger = key_finger[key]
+        score[finger] += amount
+
+    return score
 
 
 def main() -> None:

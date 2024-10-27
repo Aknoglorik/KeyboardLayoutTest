@@ -8,7 +8,7 @@ def isRussian(ch: str) -> str:
     '''
     if len(ch) > 1:
         raise ValueError('Char must have len 1!')
-    return ('а' <= ch <= 'я') or ch == 'ё'
+    return ('а' <= ch.lower() <= 'я') or ch.lower() == 'ё'
 
 
 def get_info_from_file(fname: str) -> FingerStat:
@@ -19,6 +19,6 @@ def get_info_from_file(fname: str) -> FingerStat:
     with open(fname, 'rt', encoding='utf-8') as file:
         for line in file:
             statistic.update(
-                filter(isRussian, line)
+                filter(isRussian, line.lower())
             )
     return statistic
