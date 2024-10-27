@@ -25,9 +25,9 @@ class TestFingerCalc(unittest.TestCase):
         '''
         @brief Проверка символа на принадлежность к русскому алфавиту.
         '''
-        '''
-        self.assertTrue(fingercalc.isRussian(' '))
-        '''
+        self.assertTrue(fingercalc.isRussian('w'))
+        self.assertTrue(fingercalc.isRussian('е'))
+        self.assertTrue(fingercalc.isRussian('й'))
         pass
     def test_get_info_from_file(self):
         '''
