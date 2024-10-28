@@ -1,64 +1,154 @@
+# Чеклист добавленных символов
+# - [х] 1234567890
+# - [х] !"#$%&\'()*+,-./:;<=>?@[\]^_`{|}~
+# - [х]  \t\n
+# - [х] ЙЦУКЕНГШЩЗХЪФЫВАПРОЛДЖЭЯЧСМИТЬБЮЁ
+# - [х] йцукенгшщзхъфывапролджэячсмитьбюё
+
+
+[lthumb]
+keys = [
+	{letter=' ', modifiers=[]},
+]
+
 [lpinky]
 keys = [
-	'ф',
-	'й',
-	'я',
-	'ё'
+	{letter='ф', modifiers=[]},
+	{letter='й', modifiers=[]},
+	{letter='я', modifiers=[]},
+	{letter='ё', modifiers=[]},
+	{letter='Ф', modifiers=['lshift']},
+	{letter='Й', modifiers=['lshift']},
+	{letter='Я', modifiers=['lshift']},
+	{letter='Ё', modifiers=['lshift']},
+	{letter="\t", modifiers=[]},
+	{letter='`', modifiers=['switchlayout']},
+	{letter='~', modifiers=['switchlayout', 'lshift']},
 ]
 
 [lring]
 keys = [
-	'ц',
-	'ы',
-	'ч'
+	{letter='ц', modifiers=[]},
+	{letter='ы', modifiers=[]},
+	{letter='ч', modifiers=[]},
+	{letter='Ц', modifiers=['lshift']},
+	{letter='Ы', modifiers=['lshift']},
+	{letter='Ч', modifiers=['lshift']},
+	{letter='1', modifiers=[]},
+	{letter='2', modifiers=[]},
+	{letter='!', modifiers=['lshift']},
+	{letter='@', modifiers=['switchlayout', 'lshift']},
+	{letter='"', modifiers=['lshift']},
 ]
 
 [lmiddle]
 keys = [
-	'у',
-	'в',
-	'с'
+	{letter='у', modifiers=[]},
+	{letter='в', modifiers=[]},
+	{letter='с', modifiers=[]},
+	{letter='У', modifiers=['lshift']},
+	{letter='В', modifiers=['lshift']},
+	{letter='С', modifiers=['lshift']},
+	{letter='3', modifiers=[]},
+	{letter='4', modifiers=[]},
+	{letter='#', modifiers=['switchlayout', 'lshift']},
+	{letter='$', modifiers=['switchlayout', 'lshift']},
+	{letter=';', modifiers=['lshift']},
 ]
 
 [lindex]
 keys = [
-	'к',
-	'а',
-	'м',
-	'е',
-	'п',
-	'и'
+	{letter='к', modifiers=[]},
+	{letter='а', modifiers=[]},
+	{letter='м', modifiers=[]},
+	{letter='е', modifiers=[]},
+	{letter='п', modifiers=[]},
+	{letter='и', modifiers=[]},
+	{letter='К', modifiers=['lshift']},
+	{letter='А', modifiers=['lshift']},
+	{letter='М', modifiers=['lshift']},
+	{letter='Е', modifiers=['lshift']},
+	{letter='П', modifiers=['lshift']},
+	{letter='И', modifiers=['lshift']},
+	{letter='5', modifiers=[]},
+	{letter='6', modifiers=[]},
+	{letter='%', modifiers=['lshift']},
+	{letter='^', modifiers=['switchlayout', 'lshift']},
+	{letter=':', modifiers=['lshift']},
 ]
 
 [rindex]
 keys = [
-	'н',
-	'р',
-	'т',
-	'г',
-	'о',
-	'ь'
+	{letter='н', modifiers=[]},
+	{letter='р', modifiers=[]},
+	{letter='т', modifiers=[]},
+	{letter='г', modifiers=[]},
+	{letter='о', modifiers=[]},
+	{letter='ь', modifiers=[]},
+	{letter='Н', modifiers=['lshift']},
+	{letter='Р', modifiers=['lshift']},
+	{letter='Т', modifiers=['lshift']},
+	{letter='Г', modifiers=['lshift']},
+	{letter='О', modifiers=['lshift']},
+	{letter='Ь', modifiers=['lshift']},
+	{letter='7', modifiers=[]},
+	{letter='&', modifiers=['switchlayout', 'lshift']},
+	{letter='?', modifiers=['lshift']},
 ]
 
 [rmiddle]
 keys = [
-	'ш',
-	'л',
-	'б'
+	{letter='ш', modifiers=[]},
+	{letter='л', modifiers=[]},
+	{letter='б', modifiers=[]},
+	{letter='Ш', modifiers=['lshift']},
+	{letter='Л', modifiers=['lshift']},
+	{letter='Б', modifiers=['lshift']},
+	{letter='8', modifiers=[]},
+	{letter='9', modifiers=[]},
+	{letter='*', modifiers=['lshift']},
+	{letter='(', modifiers=['lshift']},
+	{letter='<', modifiers=['switchlayout', 'lshift']},
 ]
 
 [rring]
 keys = [
-	'щ',
-	'д',
-	'ю'
+	{letter='щ', modifiers=[]},
+	{letter='д', modifiers=[]},
+	{letter='ю', modifiers=[]},
+	{letter='Щ', modifiers=['lshift']},
+	{letter='Д', modifiers=['lshift']},
+	{letter='Ю', modifiers=['lshift']},
+	{letter='0', modifiers=[]},
+	{letter=')', modifiers=['lshift']},
+	{letter='>', modifiers=['switchlayout', 'lshift']},
 ]
 
 [rpinky]
 keys = [
-	'з',
-	'ж',
-	'э',
-	'х',
-	'ъ'
+	{letter='з', modifiers=[]},
+	{letter='ж', modifiers=[]},
+	{letter='э', modifiers=[]},
+	{letter='х', modifiers=[]},
+	{letter='ъ', modifiers=[]},
+	{letter='З', modifiers=['lshift']},
+	{letter='Ж', modifiers=['lshift']},
+	{letter='Э', modifiers=['lshift']},
+	{letter='Х', modifiers=['lshift']},
+	{letter='Ъ', modifiers=['lshift']},
+	{letter="\n", modifiers=[]},
+	{letter='=', modifiers=[]},
+	{letter='+', modifiers=['lshift']},
+	{letter='-', modifiers=[]},
+	{letter='_', modifiers=['lshift']},
+	{letter=',', modifiers=['lshift']},
+	{letter='.', modifiers=[]},
+	{letter="'", modifiers=['switchlayout']},
+	{letter='\', modifiers=[]},
+	{letter='|', modifiers=['switchlayout', 'lshift']},
+	{letter='/', modifiers=['lshift']},
+	{letter='[', modifiers=['switchlayout']},
+	{letter=']', modifiers=['switchlayout']},
+	{letter='{', modifiers=['switchlayout', 'lshift']},
+	{letter='}', modifiers=['switchlayout', 'lshift']},
 ]
