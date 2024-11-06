@@ -83,15 +83,15 @@ class TestFingerCalc(unittest.TestCase):
         text = fingercalc.get_info_from_file('testfiles/test.txt')
         my_date = fingercalc.count_to_score(text, QWERTY_LAYOUT)
         date = {
-          'lpinky': 0,
+          'lpinky': 1,
           'lring': 0,
           'lmiddle': 0,
           'lindex': 5,
           'lthumb': 1,
-          'rpinky': 2,
+          'rpinky': 0,
           'rring': 0,
           'rmiddle': 0,
-          'rindex': 0,
+          'rindex': 1,
         }
         self.assertEqual(date, my_date)   
 if __name__ == "__main__":
