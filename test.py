@@ -74,10 +74,11 @@ class TestFingerCalc(unittest.TestCase):
             'я': 1,
         }
         self.assertCountEqual(my_stat.items(), correct_stat.items())
+
     def test_count_to_score(self):
         '''
-        @brief Принятие "Раскладки" (load_layout) и статистики нажатия на клавиши
-        (get_info_from_file) и подсчитывание кол-ва нажатий пальцем.
+        @brief Принятие "Раскладки" (load_layout) и статистики нажатия на
+        клавиши (get_info_from_file) и подсчитывание кол-ва нажатий пальцем.
         '''
         QWERTY_LAYOUT = config.load_layout(r'testlayouts/qwerty.toml')
         text = fingercalc.get_info_from_file('testfiles/test.txt')
@@ -94,6 +95,8 @@ class TestFingerCalc(unittest.TestCase):
           'rindex': 1,
           'rthumb': 0,
         }
-        self.assertCountEqual(date.items(), my_date.items())   
+        self.assertCountEqual(date.items(), my_date.items())
+
+
 if __name__ == "__main__":
     unittest.main()
