@@ -6,6 +6,15 @@
 # - [х] йцукенгшщзхъфывапролджэячсмитьбюё
 
 
+[modifiers]
+	lshift = 'lpinky'
+	lctr = 'lpinky'
+	lalt = 'lthumb'
+	rshift = 'rpinky'
+	rctr = 'rpinky'
+	ralt = 'rthumb'
+	switchlayout = ['lpinky', 'lthumb']
+
 [lthumb]
 keys = [
 	{letter=' ', modifiers=[]},

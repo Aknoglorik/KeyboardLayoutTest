@@ -3,24 +3,50 @@ from config import (
     Finger,
     FingerStat,
     FingerLayout,
+    Modifier,
     key_to_finger,
 )
 from collections import Counter, defaultdict
 
 
-def count_to_score(stat: FingerStat, layout: FingerLayout
+def count_keys_by_modifiers(key_mods: list[str],
+                            modifiers: dict[Modifier, Finger],
+                            factor: int = 1) -> list[tuple[Finger, int]]:
+    def to_list(obj: list[str] | str) -> list[str]:
+        if isinstance(obj, str):
+            return [obj]
+        return obj
+
+    score = Counter()
+    for mod in key_mods:
+        for finger in to_list(modifiers[mod]):
+            score[finger] += factor
+    return score
+
+
+def count_to_score(stat: FingerStat, fing_layout: FingerLayout
                    ) -> dict[Finger, int]:
     '''
     @brief На основе полученной `статистики` подсчитывает кол-во очков для
     '''
+    def _addictive_merge_dicts(*sources: dict[str, int]) -> dict[str, int]:
+        result = defaultdict(int)
+        for sorce in sources:
+            for key, value in sorce.items():
+                result[key] += value
+        return result
+
+    layout, modifiers = fing_layout
     key_finger = key_to_finger(layout)
     score = defaultdict(int)
     for finger in Finger:
         score[finger.value]
 
     for key, amount in stat.items():
-        finger, _ = key_finger[key]
+        finger, mods = key_finger[key]
+        mods_score = count_keys_by_modifiers(mods, modifiers, amount)
         score[finger] += amount
+        score = _addictive_merge_dicts(score, mods_score)
 
     return score
 

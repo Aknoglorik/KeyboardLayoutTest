@@ -3,6 +3,8 @@ from collections import Counter
 
 import tomllib
 
+from typing import NoReturn
+
 
 ALPHABET = (
     '1234567890'
@@ -15,7 +17,7 @@ ALPHABET = (
 
 type FingerStat = Counter
 type Key = str
-type FingerLayout = dict[Finger, list[Key]]
+type FingerLayout = tuple[dict[Finger, list[Key]], dict[Modifier, Finger]]
 
 
 class Finger(StrEnum):
@@ -41,11 +43,12 @@ class Modifier(StrEnum):
     SwitchLayout = auto()
 
 
-def assert_layout(layout: FingerLayout) -> bool:
+def assert_layout(layout: FingerLayout) -> None | NoReturn:
     '''
     @brief Функция проверки `полноценности` раскладки (т.е. наличия всех
     символов, алфавита)
     '''
+    layout = layout[0]
     layout_alphabet = ''.join([
         letter_info['letter']
         for finger_info in layout.values()
@@ -66,13 +69,29 @@ def assert_layout(layout: FingerLayout) -> bool:
         )
 
 
+def assert_modifiers(modifiers: dict[Modifier, Finger]) -> None | NoReturn:
+    mods = set(modifiers.keys())
+    layout_mods = set([mod.value for mod in Modifier])
+    if layout_mods != mods:
+        raise ValueError(
+            'Sets are not equals!\n'
+            f'{mods}\n'
+            f'{layout_mods}\n'
+        )
+
+
 def load_layout(fname: str) -> FingerLayout:
     '''
     @brief Загружает toml-конфиг для раскладки из указанного файла.
     '''
     with open(fname, 'rb') as f:
-        layout = tomllib.load(f)
+        data = tomllib.load(f)
+
+    modifiers = data.pop('modifiers')
+    layout = (data, modifiers)
+    assert_modifiers(modifiers)
     assert_layout(layout)
+
     return layout
 
 
