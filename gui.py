@@ -3,9 +3,13 @@ from matplotlib.widgets import Button
 from config import Finger
 import random
 
-# letters ?
 
-def plot_by_stat(statistic: dict[Finger, int], statistic2: dict[Finger, int], layout, layout2, txt_name):
+def plot_by_stat(statistic: dict[Finger, int], statistic2: dict[Finger, int],
+                 layout: str, layout2: str, txt_name: str):
+    '''
+    @brief Функция для построенния графиков сравнения статистик нажатия на
+    клавишиа, при разных раскладках.
+    '''
 
     values = list(statistic.values())
 
@@ -27,8 +31,12 @@ def plot_by_stat(statistic: dict[Finger, int], statistic2: dict[Finger, int], la
             ax1.barh(
                 labels_left[::-1],
                 loads_left[::-1],
-                color=[colors_list[0], colors_list[0], colors_list[1], colors_list[1], \
-                    colors_list[2], colors_list[2], colors_list[3], colors_list[3]],
+                color=[
+                    colors_list[0], colors_list[0],
+                    colors_list[1], colors_list[1],
+                    colors_list[2], colors_list[2],
+                    colors_list[3], colors_list[3]
+                ],
                 height=0.5
             )
 
@@ -39,8 +47,12 @@ def plot_by_stat(statistic: dict[Finger, int], statistic2: dict[Finger, int], la
             ax2.barh(
                 labels_right[::-1],
                 loads_right[::-1],
-                color=[colors_list[0], colors_list[0], colors_list[1], colors_list[1], \
-                    colors_list[2], colors_list[2], colors_list[3], colors_list[3]],
+                color=[
+                    colors_list[0], colors_list[0],
+                    colors_list[1], colors_list[1],
+                    colors_list[2], colors_list[2],
+                    colors_list[3], colors_list[3]
+                ],
                 height=0.5
             )
 
@@ -51,22 +63,36 @@ def plot_by_stat(statistic: dict[Finger, int], statistic2: dict[Finger, int], la
             max_load = max(values) + 5
             ax1.set_xlim(0, max_load)
             ax2.set_xlim(0, max_load)
-            
+
         else:
             loads1 = loads_left + loads_right
 
-            labels_left_alt = [word + ' левый' for word in (s.split()[0] for s in labels_right)]
-            labels_right_alt = [word + ' правый' for word in (s.split()[0] for s in labels_right)]
+            labels_left_alt = [
+                word+' левый' for word in (s.split()[0] for s in labels_right)
+            ]
+            labels_right_alt = [
+                word+' правый' for word in (s.split()[0] for s in labels_right)
+            ]
             labels1 = labels_left_alt + labels_right_alt
 
-            ax1.pie(loads1[0::2], labels=labels1[0::2], autopct='%1.1f%%', startangle=140)
+            ax1.pie(
+                loads1[0::2],
+                labels=labels1[0::2],
+                autopct='%1.1f%%',
+                startangle=140
+            )
             ax1.axis('equal')
             ax1.set_title(f'{layout}')
 
-            ax2.pie(loads1[1::2], labels=labels1[1::2], autopct='%1.1f%%', startangle=140)
+            ax2.pie(
+                loads1[1::2],
+                labels=labels1[1::2],
+                autopct='%1.1f%%',
+                startangle=140
+            )
             ax2.axis('equal')
             ax2.set_title(f'{layout2}')
-            
+
         click_button = not click_button
         plt.draw()
 
@@ -114,12 +140,14 @@ def plot_by_stat(statistic: dict[Finger, int], statistic2: dict[Finger, int], la
         f'Указательный ({layout2})',
     ]
 
-    fig, (ax1, ax2) = plt.subplots(2, 1, figsize=(6, 12), constrained_layout=True)
+    fig = plt.figure(figsize=(6, 12), constrained_layout=True)
+    ax1, ax2 = fig.subplots(2, 1)
     fig.suptitle(
-        f'Нагрузка на пальцы\nРаскладки - {layout}, {layout2}\nТекст - {txt_name}'
+        f'Нагрузка на пальцы\nРаскладки - {layout}, {layout2}\n'
+        f'Текст - {txt_name}'
     )
-    
-    #fig.tight_layout(rect=[0.05, 0.05, 1, 0.95])
+
+    # fig.tight_layout(rect=[0.05, 0.05, 1, 0.95])
     fig.set_constrained_layout_pads(rect=[0, 0.05, 0.98, 0.9])
 
     click_button = True
@@ -127,7 +155,7 @@ def plot_by_stat(statistic: dict[Finger, int], statistic2: dict[Finger, int], la
     button = Button(ax_button, 'switch')
     button.on_clicked(update_graph)
     update_graph(None)
-    
+
     plt.show()
 
 
