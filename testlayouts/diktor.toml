@@ -143,6 +143,7 @@ keys = [
 	{letter=')', modifiers=['lshift']},
 	{letter="\n", modifiers=[]},
 	{letter='=', modifiers=[]},
+	{letter='0', modifiers=[]},
 	{letter='+', modifiers=['lshift']},
 	{letter='*', modifiers=[]},
 	{letter='-', modifiers=['lshift']},
