@@ -24,14 +24,24 @@ def main() -> None:
     согласно ТЗ, которые будут переданы в функции gui.py
     '''
 
+    layout = 'ЙЦУКЕН'
+    layout2 = 'Русский фонетический'
+    text_name = 'Война и мир'
+
     QWERTY_LAYOUT: FingerLayout = load_layout(r'testlayouts/qwerty.toml')
 
     statistics: FingerStat = get_info_from_file('books/war_and_peace.txt')
-    finger_stress = normolize_finger_stress(
+    finger_stress_qwerty = normolize_finger_stress(
         count_to_score(statistics, QWERTY_LAYOUT)
     )
 
-    plot_by_stat(finger_stress)
+    PHON_LAYOUT: FingerLayout = load_layout(r'testlayouts/phonetikal.toml')
+    finger_stress_phon = normolize_finger_stress(
+        count_to_score(statistics, PHON_LAYOUT)
+    )
+
+    plot_by_stat(finger_stress_qwerty, finger_stress_phon, layout, layout2, text_name)
+
 
 
 if __name__ == '__main__':
