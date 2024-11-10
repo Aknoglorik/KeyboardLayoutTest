@@ -47,11 +47,12 @@ keys = [
 	{letter='е', modifiers=[]},
 	{letter='д', modifiers=[]},
 	{letter='ц', modifiers=[]},
-	{letter='Я', modifiers=['lshift']},
+	{letter='Е', modifiers=['lshift']},
 	{letter='Д', modifiers=['lshift']},
 	{letter='Ц', modifiers=['lshift']},
 	{letter='3', modifiers=[]},
 	{letter='ё', modifiers=['lshift']},
+	{letter='%', modifiers=['switchlayout', 'lshift']},
 	{letter='#', modifiers=['switchlayout', 'lshift']},
 	{letter='$', modifiers=['switchlayout', 'lshift']},
 ]
@@ -152,4 +153,5 @@ keys = [
 	{letter=']', modifiers=['switchlayout']},
 	{letter='{', modifiers=['switchlayout', 'lshift']},
 	{letter='}', modifiers=['switchlayout', 'lshift']},
+	{letter='\', modifiers=['switchlayout', 'lshift']},
 ]

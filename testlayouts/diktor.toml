@@ -52,7 +52,7 @@ keys = [
 	{letter='Е', modifiers=['lshift']},
 	{letter='Х', modifiers=['lshift']},
 	{letter='3', modifiers=[]},
-	{letter='№', modifiers=['lshift']},
+	#{letter='№', modifiers=['lshift']},
 	{letter='#', modifiers=['switchlayout', 'lshift']},
 	{letter='$', modifiers=['switchlayout', 'lshift']},
 ]
@@ -122,7 +122,7 @@ keys = [
 	{letter='С', modifiers=['lshift']},
 	{letter='Г', modifiers=['lshift']},
 	{letter='9', modifiers=[]},
-	{letter=')', modifiers=['lshift']},
+	{letter='(', modifiers=['lshift']},
 	{letter='>', modifiers=['switchlayout', 'lshift']},
 ]
 
@@ -140,6 +140,7 @@ keys = [
 	{letter='Ш', modifiers=['lshift']},
 	{letter='Щ', modifiers=['lshift']},
 	{letter='Й', modifiers=['lshift']},
+	{letter=')', modifiers=['lshift']},
 	{letter="\n", modifiers=[]},
 	{letter='=', modifiers=[]},
 	{letter='+', modifiers=['lshift']},
