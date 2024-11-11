@@ -1,8 +1,12 @@
+from asyncio import Future
+import asyncio
+
 from enum import StrEnum, auto
 from collections import Counter
 
 import tomllib
 
+import logging as log
 from typing import NoReturn
 
 
@@ -80,17 +84,30 @@ def assert_modifiers(modifiers: dict[Modifier, Finger]) -> None | NoReturn:
         )
 
 
-def load_layout(fname: str) -> FingerLayout:
-    '''
-    @brief Загружает toml-конфиг для раскладки из указанного файла.
-    '''
+async def _load_layout(fname: str, future: Future) -> None:
+    log.info('Start read layout: %s', fname)
     with open(fname, 'rb') as f:
         data = tomllib.load(f)
 
     modifiers = data.pop('modifiers')
     layout = (data, modifiers)
-    assert_modifiers(modifiers)
-    assert_layout(layout)
+    try:
+        assert_modifiers(modifiers)
+        assert_layout(layout)
+    except ValueError as e:
+        future.cancel(str(e))
+        return
+
+    log.info('End read layout: %s', fname)
+    future.set_result(layout)
+
+
+def load_layout(fname: str) -> Future[FingerLayout]:
+    '''
+    @brief Загружает toml-конфиг для раскладки из указанного файла.
+    '''
+    layout = Future()
+    asyncio.create_task(_load_layout(fname, layout))
 
     return layout
 
