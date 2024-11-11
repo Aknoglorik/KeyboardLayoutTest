@@ -3,6 +3,9 @@ import asyncio
 
 from config import (
     ALPHABET,
+    RUSSIAN,
+    WHITE_SPACES,
+    PUNCTUATION,
     Finger,
     FingerStat,
     FingerLayout,
@@ -25,13 +28,15 @@ def count_keys_by_modifiers(key_mods: list[str],
     score = Counter()
     for mod in key_mods:
         for finger in to_list(modifiers[mod]):
-            score[finger] += factor
+            if mod == Modifier.SwitchLayout:
+                score[finger] += 2*factor
+            else:
+                score[finger] += factor
     return score
 
 
 async def _count_to_score(stat: FingerStat, finger_layout: FingerLayout,
                           future: Future) -> dict[Finger, int]:
-    log.info('Start counting score')
 
     def _addictive_merge_dicts(*sources: dict[str, int]) -> dict[str, int]:
         result = defaultdict(int)
@@ -40,13 +45,15 @@ async def _count_to_score(stat: FingerStat, finger_layout: FingerLayout,
                 result[key] += value
         return result
 
+    log.info('Start counting score')
+
     layout, modifiers = finger_layout
     key_finger = key_to_finger(layout)
-    score = defaultdict(int)
-    for finger in Finger:
-        score[finger.value]
+    score = dict.fromkeys([finger.value for finger in Finger], 0)
 
-    for key, amount in stat.items():
+    symbols, digramms = stat
+
+    for key, amount in symbols.items():
         await asyncio.sleep(0)
         finger, mods = key_finger[key]
         mods_score = count_keys_by_modifiers(mods, modifiers, amount)
@@ -80,21 +87,43 @@ def isRussian(ch: str) -> str:
 async def _get_info_from_file(fname: str, future: Future) -> None:
     log.info('Start read file: %s', fname)
 
-    statistic: FingerStat = Counter()
+    def _count_digramms(text: str) -> Counter:
+        digramms = Counter()
+        for word in text.strip().split():
+            for i in range(len(word) - 1):
+                digramm = word[i:i+2]
+                digramms[digramm] += 1
+
+        return digramms
+
+    symbols = Counter()
+    digramms = Counter()
+    translate_punct2space = str.maketrans(PUNCTUATION, ' ' * len(PUNCTUATION))
+
     with open(fname, 'rt', encoding='utf-8') as file:
         for line in file:
             await asyncio.sleep(0)
-            statistic.update(
-                filter(isRussian, line)
+
+            symbols.update(filter(isRussian, line))
+
+            punct_less_line = (
+                line
+                .lower()
+                .translate(translate_punct2space)
             )
 
+            filtred_line = ''.join(
+                filter(lambda x: x in RUSSIAN+WHITE_SPACES, punct_less_line)
+            )
+            digramms.update(_count_digramms(filtred_line))
+
     log.info('End read file: %s', fname)
-    future.set_result(statistic)
+    future.set_result((symbols, digramms))
 
 
 def get_info_from_file(fname: str) -> Future[FingerStat]:
     '''
-    @brief Из файла подсчитывается кол-во символов и лексем.
+    @brief Из файла подсчитывается кол-во символов и диграмм.
     '''
     statistic = Future()
     asyncio.create_task(_get_info_from_file(fname, statistic))

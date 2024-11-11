@@ -50,8 +50,11 @@ async def main() -> None:
     task_phon = count_to_score(statistics, PHON_LAYOUT)
     task_diktor = count_to_score(statistics, DIKTOR_LAYOUT)
 
-    finger_stress_qwerty, finger_stress_phon, finger_stress_diktor = (
-        await asyncio.gather(task_qwerty, task_phon, task_diktor)
+    finger_stress_qwerty, finger_stress_phon, finger_stress_diktor = list(
+        map(
+            normolize_finger_stress,
+            await asyncio.gather(task_qwerty, task_phon, task_diktor)
+        )
     )
 
     plot_by_stat(

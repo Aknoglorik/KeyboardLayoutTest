@@ -10,16 +10,18 @@ import logging as log
 from typing import NoReturn
 
 
-ALPHABET = (
-    '1234567890'
+NUMERIC: str = '1234567890'
+WHITE_SPACES: str = ' \t\n'
+PUNCTUATION: str = '!"#$%&\'()*+,-./:;<=>?@[\\]^_`{|}~'
+RUSSIAN: str = (
     'йцукенгшщзхъфывапролджэячсмитьбюё'
     'ЙЦУКЕНГШЩЗХЪФЫВАПРОЛДЖЭЯЧСМИТЬБЮЁ'
-    '!"#$%&\'()*+,-./:;<=>?@[\\]^_`{|}~'
-    ' \t\n'
 )
+ALPHABET: str = NUMERIC + WHITE_SPACES + PUNCTUATION + RUSSIAN
 
 
-type FingerStat = Counter
+type Digramms = dict[str, int]
+type FingerStat = tuple[Counter, Digramms]
 type Key = str
 type FingerLayout = tuple[dict[Finger, list[Key]], dict[Modifier, Finger]]
 
