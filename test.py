@@ -1,7 +1,9 @@
 import unittest
 import config
 import fingercalc
+from unittest import IsolatedAsyncioTestCase
 
+events = []
 
 class TestConfig(unittest.TestCase):
     '''
@@ -18,10 +20,11 @@ class TestConfig(unittest.TestCase):
         pass
 
 
-class TestFingerCalc(unittest.TestCase):
+class TestFingerCalc(IsolatedAsyncioTestCase):
     '''
     @brief Класс для тестирования корректности функций рассчета кол-ва нажатий.
     '''
+    
     def test_isRussian(self):
         '''
         @brief Проверка символа на принадлежность к русскому алфавиту.
@@ -31,13 +34,14 @@ class TestFingerCalc(unittest.TestCase):
         self.assertTrue(fingercalc.isRussian('й'))
         pass
 
-    def test_get_info_from_file(self):
+    async def test_get_info_from_file(self):
         '''
         @brief Передать в соответсвующую функцю имя файла (файл небольшой для
         теста) после сравнить правильность полученных результатов с уже
         известными.
         '''
-        my_stat = fingercalc.get_info_from_file('test1.txt')
+        my_stat = await fingercalc.get_info_from_file('test1.txt')
+        my_stat = my_stat[0]
         correct_stat = {
             'а': 1,
             'б': 1,
@@ -75,14 +79,14 @@ class TestFingerCalc(unittest.TestCase):
         }
         self.assertCountEqual(my_stat.items(), correct_stat.items())
 
-    def test_count_to_score(self):
+    async def test_count_to_score(self):
         '''
         @brief Принятие "Раскладки" (load_layout) и статистики нажатия на
         клавиши (get_info_from_file) и подсчитывание кол-ва нажатий пальцем.
         '''
-        QWERTY_LAYOUT = config.load_layout(r'testlayouts/qwerty.toml')
-        text = fingercalc.get_info_from_file('testfiles/test.txt')
-        my_date = fingercalc.count_to_score(text, QWERTY_LAYOUT)
+        QWERTY_LAYOUT = await config.load_layout(r'testlayouts/qwerty.toml')
+        text = await fingercalc.get_info_from_file('testfiles/test.txt')
+        my_date = await fingercalc.count_to_score(text, QWERTY_LAYOUT)
         date = {
           'lpinky': 0,
           'lring': 0,
