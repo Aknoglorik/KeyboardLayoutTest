@@ -38,7 +38,7 @@ keys = [
 [lring]
 keys = [
 	{letter='ц', modifiers=[], score=1},
-	{letter='ы', modifiers=[], score=0}
+	{letter='ы', modifiers=[], score=0},
 	{letter='ч', modifiers=[], score=1},
 	{letter='Ц', modifiers=['lshift'], score=1},
 	{letter='Ы', modifiers=['lshift'], score=0},
