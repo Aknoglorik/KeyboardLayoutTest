@@ -60,8 +60,10 @@ async def main() -> None:
     plot_by_stat(
         finger_stress_qwerty,
         finger_stress_phon,
+        finger_stress_diktor,
         layout='ЙЦУКЕН',
         layout2='Русский фонетический',
+        layout3='Диктор',
         txt_name='Война и мир'
     )
 

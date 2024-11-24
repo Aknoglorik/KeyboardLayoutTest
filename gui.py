@@ -3,161 +3,95 @@ from matplotlib.widgets import Button
 from config import Finger
 import random
 
+class StatisticDrawer:
+    def __init__(self, labels, loads1, loads2, loads3, txt_name, layout, layout2, layout3):
+        self.labels = labels
+        self.loads1 = loads1
+        self.loads2 = loads2
+        self.loads3 = loads3
+
+        self.layout = layout
+        self.layout2 = layout2
+        self.layout3 = layout3
+
+        self.txt_name = txt_name
+
+        self.num_groups = len(labels)
+        self.width = 0.3
+        self.x_pos = list(range(self.num_groups))
+
+        self.colors_list = [
+            'red',
+            'blue',
+            'green',
+            'black',
+        ]
+    
+    def draw_value(self, bars, ax):
+        for bar in bars:
+            height = bar.get_height()
+            ax.text(bar.get_x() + bar.get_width() / 2, height, str(int(height)),
+                    ha='center', va='bottom')
+    
+    def draw_bars(self, ax, position, name):
+        bars1 = ax.bar([i - self.width for i in self.x_pos[position]], self.loads1[position], self.width, label=self.layout, color=self.colors_list[0])
+        bars2 = ax.bar(self.x_pos[position], self.loads2[position], self.width, label=self.layout2, color=self.colors_list[1])
+        bars3 = ax.bar([i + self.width for i in self.x_pos[position]], self.loads3[position], self.width, label=self.layout3, color=self.colors_list[2])
+        
+        ax.set_ylabel('Проценты нагрузки (%)')
+        ax.set_title(f'Нагрузка на {name} руке')
+        ax.set_xticks(self.x_pos[position])
+        ax.set_xticklabels(self.labels[position])
+        ax.legend()
+
+        self.draw_value(bars1, ax)
+        self.draw_value(bars2, ax)
+        self.draw_value(bars3, ax)
+
+    def show_result(self):
+        fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(10, 5))
+        fig.suptitle(f'Нагрузка на пальцы\n Текст - {self.txt_name}', fontsize=16)
+        
+        self.draw_bars(ax1, slice(None, 4), 'левой')
+        self.draw_bars(ax2, slice(4, None), 'правой')
+        
+        plt.tight_layout()
+        plt.show()
+
 
 def plot_by_stat(statistic: dict[Finger, int], statistic2: dict[Finger, int],
-                 layout: str, layout2: str, txt_name: str):
+                 statistic3: dict[Finger, int],
+                 layout: str, layout2: str, layout3: str, txt_name: str):
     '''
     @brief Функция для построенния графиков сравнения статистик нажатия на
-    клавишиа, при разных раскладках.
+    клавиши, при разных раскладках.
     '''
 
-    values = list(statistic.values())
+    loads1 = [statistic[name.value] for name in
+                (Finger.LPinky, Finger.LRing, Finger.LMiddle, Finger.LIndex,
+                Finger.RIndex, Finger.RMiddle, Finger.RRing, Finger.RPinky)]
 
-    colors_list = [
-        'blue',
-        'green',
-        'red',
-        'purple',
+    loads2 = [statistic2[name.value] for name in
+                (Finger.LPinky, Finger.LRing, Finger.LMiddle, Finger.LIndex,
+                Finger.RIndex, Finger.RMiddle, Finger.RRing, Finger.RPinky)]
+    
+    loads3 = [statistic3[name.value] for name in
+                (Finger.LPinky, Finger.LRing, Finger.LMiddle, Finger.LIndex,
+                Finger.RIndex, Finger.RMiddle, Finger.RRing, Finger.RPinky)]
+
+    labels = [
+        f'Мизинец \nleft',
+        f'Безымянный \nleft',
+        f'Средний \nleft',
+        f'Указательный \nleft',
+        f'Указательный \nright',
+        f'Средний \nright',
+        f'Безымянный \nright',        
+        f'Мизинец \nright',
     ]
 
-    # inner
-    def update_graph(event):
-        ax1.clear()
-        ax2.clear()
-
-        nonlocal click_button
-
-        if click_button:
-            ax1.barh(
-                labels_left[::-1],
-                loads_left[::-1],
-                color=[
-                    colors_list[0], colors_list[0],
-                    colors_list[1], colors_list[1],
-                    colors_list[2], colors_list[2],
-                    colors_list[3], colors_list[3]
-                ],
-                height=0.5
-            )
-
-            ax1.set_xlabel('Проценты нагрузки (%)')
-            ax1.set_ylabel('Название пальца')
-            ax1.set_title('Нагрузка на левой руке', loc='left')
-
-            ax2.barh(
-                labels_right[::-1],
-                loads_right[::-1],
-                color=[
-                    colors_list[0], colors_list[0],
-                    colors_list[1], colors_list[1],
-                    colors_list[2], colors_list[2],
-                    colors_list[3], colors_list[3]
-                ],
-                height=0.5
-            )
-
-            ax2.set_xlabel('Проценты нагрузки (%)')
-            ax2.set_ylabel('Название пальца')
-            ax2.set_title('Нагрузка на правой руке', loc='left')
-
-            max_load = max(values) + 5
-            ax1.set_xlim(0, max_load)
-            ax2.set_xlim(0, max_load)
-
-        else:
-            loads1 = loads_left + loads_right
-
-            labels_left_alt = [
-                word+' левый' for word in (s.split()[0] for s in labels_right)
-            ]
-            labels_right_alt = [
-                word+' правый' for word in (s.split()[0] for s in labels_right)
-            ]
-            labels1 = labels_left_alt + labels_right_alt
-
-            ax1.pie(
-                loads1[0::2],
-                labels=labels1[0::2],
-                autopct='%1.1f%%',
-                startangle=140
-            )
-            ax1.axis('equal')
-            ax1.set_title(f'{layout}')
-
-            ax2.pie(
-                loads1[1::2],
-                labels=labels1[1::2],
-                autopct='%1.1f%%',
-                startangle=140
-            )
-            ax2.axis('equal')
-            ax2.set_title(f'{layout2}')
-
-        click_button = not click_button
-        plt.draw()
-
-    loads_right = [
-        statistic[Finger.RPinky.value],
-        statistic2[Finger.RPinky.value],
-        statistic[Finger.RRing.value],
-        statistic2[Finger.RRing.value],
-        statistic[Finger.RMiddle.value],
-        statistic2[Finger.RMiddle.value],
-        statistic[Finger.RIndex.value],
-        statistic2[Finger.RIndex.value]
-    ]
-
-    loads_left = [
-        statistic[Finger.LPinky.value],
-        statistic2[Finger.LPinky.value],
-        statistic[Finger.LRing.value],
-        statistic2[Finger.LRing.value],
-        statistic[Finger.LMiddle.value],
-        statistic2[Finger.LMiddle.value],
-        statistic[Finger.LIndex.value],
-        statistic2[Finger.LIndex.value],
-    ]
-
-    labels_right = [
-        f'Мизинец ({layout})',
-        f'Мизинец ({layout2})',
-        f'Безымянный ({layout})',
-        f'Безымянный ({layout2})',
-        f'Средний ({layout})',
-        f'Средний ({layout2})',
-        f'Указательный ({layout})',
-        f'Указательный ({layout2})',
-    ]
-
-    labels_left = [
-        f'Мизинец ({layout})',
-        f'Мизинец ({layout2})',
-        f'Безымянный ({layout})',
-        f'Безымянный ({layout2})',
-        f'Средний ({layout})',
-        f'Средний ({layout2})',
-        f'Указательный ({layout})',
-        f'Указательный ({layout2})',
-    ]
-
-    fig = plt.figure(figsize=(6, 12), constrained_layout=True)
-    ax1, ax2 = fig.subplots(2, 1)
-    fig.suptitle(
-        f'Нагрузка на пальцы\nРаскладки - {layout}, {layout2}\n'
-        f'Текст - {txt_name}'
-    )
-
-    # fig.tight_layout(rect=[0.05, 0.05, 1, 0.95])
-    fig.set_constrained_layout_pads(rect=[0, 0.05, 0.98, 0.9])
-
-    click_button = True
-    ax_button = plt.axes([0.05, 0.9, 0.1, 0.075])
-    button = Button(ax_button, 'switch')
-    button.on_clicked(update_graph)
-    update_graph(None)
-
-    plt.show()
-
+    draw = StatisticDrawer(labels, loads1, loads2, loads3, txt_name, layout, layout2, layout3)
+    draw.show_result()
 
 if __name__ == '__main__':
     statistic = {member: random.randint(1, 100) for member in Finger}
