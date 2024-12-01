@@ -9,7 +9,7 @@
 
 [lthumb]
 keys = [
-	{letter=' ', modifiers=[]},
+	{letter=' ', modifiers=[], score=0},
 ]
 
 [lpinky]

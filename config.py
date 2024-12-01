@@ -23,7 +23,8 @@ ALPHABET: str = NUMERIC + WHITE_SPACES + PUNCTUATION + RUSSIAN
 type Digramms = dict[str, int]
 type FingerStat = tuple[Counter, Digramms]
 type Key = str
-type FingerLayout = tuple[dict[Finger, list[Key]], dict[Modifier, Finger]]
+type KeyInfo = list[tuple[Key, list[Modifier], int]]
+type FingerLayout = tuple[dict[Finger, KeyInfo], dict[Modifier, Finger]]
 
 
 class Finger(StrEnum):
@@ -86,6 +87,21 @@ def assert_modifiers(modifiers: dict[Modifier, Finger]) -> None | NoReturn:
         )
 
 
+def assert_data_structure(layout: dict[Finger, KeyInfo]) -> None:
+    target_keys = ['score', 'letter', 'modifiers']
+    for header, data in layout.items():
+        if header not in Finger:
+            continue
+        keys = data['keys']
+        for key in keys:
+            if set(key.keys()) != set(target_keys):
+                raise ValueError(
+                    'Uncorrect data structure:\n'
+                    f'Get {key.keys()} on {key}\n'
+                    f'Must be {target_keys}'
+                )
+
+
 async def _load_layout(fname: str, future: Future) -> None:
     log.info('Start read layout: %s', fname)
     with open(fname, 'rb') as f:
@@ -94,8 +110,9 @@ async def _load_layout(fname: str, future: Future) -> None:
     modifiers = data.pop('modifiers')
     layout = (data, modifiers)
     try:
-        assert_modifiers(modifiers)
+        assert_data_structure(data)
         assert_layout(layout)
+        assert_modifiers(modifiers)
     except ValueError as e:
         future.cancel(str(e))
         return
@@ -124,6 +141,6 @@ def key_to_finger(layout: FingerLayout
     for finger_name, finger_info in layout.items():
         for letter_info in finger_info['keys']:
             data[letter_info['letter']] = (
-                [finger_name, letter_info['modifiers']]
+                [finger_name, letter_info['modifiers'], letter_info['score']]
             )
     return data

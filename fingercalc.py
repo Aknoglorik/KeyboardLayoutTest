@@ -55,9 +55,9 @@ async def _count_to_score(stat: FingerStat, finger_layout: FingerLayout,
 
     for key, amount in symbols.items():
         await asyncio.sleep(0)
-        finger, mods = key_finger[key]
+        finger, mods, finger_score = key_finger[key]
         mods_score = count_keys_by_modifiers(mods, modifiers, amount)
-        score[finger] += amount
+        score[finger] += amount * finger_score
         score = _addictive_merge_dicts(score, mods_score)
 
     log.info('End count score')
