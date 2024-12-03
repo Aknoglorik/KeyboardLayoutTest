@@ -13,8 +13,97 @@ from config import (
     key_to_finger,
 )
 from collections import Counter, defaultdict
+from enum import Enum, auto
 
 import logging as log
+
+
+class BustOrder(Enum):
+    # Невозможно
+    NONE = auto()
+    # Для левой руки слева направо, для правой руки наоборот
+    DIRECT = auto()
+    # Для левой руки справа налево, для правой руки наоборот
+    REVERSE = auto()
+
+
+def is_continue_row[T](prev_: T, next_: T, row: list[T]) -> bool:
+    if prev_ not in row or next_ not in row:
+        return False
+    return row.index(prev_) < row.index(next_)
+
+
+def get_bust_orders(text: str, finger_layout: FingerLayout
+                    ) -> tuple[BustOrder, BustOrder]:
+    '''
+    @return[0] способ перебора правой рукой
+    @return[1] способ перебора левой рукой
+    '''
+    if not text:
+        return BustOrder.NONE, BustOrder.NONE
+
+    left_finger_order = [
+        Finger.LPinky.value, Finger.LRing.value, Finger.LMiddle.value,
+        Finger.LIndex.value, Finger.LThumb.value
+    ]
+    rev_left_finger_order = list(reversed(left_finger_order))
+
+    right_finger_order = [
+        Finger.RPinky.value, Finger.RRing.value, Finger.RMiddle.value,
+        Finger.RIndex.value, Finger.RThumb.value
+    ]
+    rev_right_finger_order = list(reversed(right_finger_order))
+
+    layout, modifiers = finger_layout
+    key_finger = key_to_finger(layout)
+
+    prev_finger = key_finger[text[0]][0]
+
+    left_hand_direct = True
+    left_hand_reverse = True
+    right_hand_direct = True
+    right_hand_reverse = True
+
+    for letter in text[1:]:
+        next_finger = key_finger[letter][0]
+
+        left_hand_direct = (
+            left_hand_direct and
+            is_continue_row(prev_finger, next_finger, left_finger_order)
+        )
+        left_hand_reverse = (
+            left_hand_reverse and
+            is_continue_row(prev_finger, next_finger, rev_left_finger_order)
+        )
+        right_hand_direct = (
+            right_hand_direct and
+            is_continue_row(prev_finger, next_finger, right_finger_order)
+        )
+        right_hand_reverse = (
+            right_hand_reverse and
+            is_continue_row(prev_finger, next_finger, rev_right_finger_order)
+        )
+        prev_finger = next_finger
+
+    if (left_hand_direct and left_hand_reverse
+            or right_hand_direct and right_hand_reverse):
+        raise RuntimeError('Ambiguous result')
+
+    if left_hand_direct:
+        left_hand = BustOrder.DIRECT
+    elif left_hand_reverse:
+        left_hand = BustOrder.REVERSE
+    else:
+        left_hand = BustOrder.NONE
+
+    if right_hand_direct:
+        right_hand = BustOrder.DIRECT
+    elif right_hand_reverse:
+        right_hand = BustOrder.REVERSE
+    else:
+        right_hand = BustOrder.NONE
+
+    return left_hand, right_hand
 
 
 def count_keys_by_modifiers(key_mods: list[str],
