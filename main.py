@@ -2,9 +2,15 @@ import asyncio
 
 from config import (
     Finger,
+    FingerLayout,
     load_layout,
 )
-from fingercalc import get_info_from_file, count_to_score
+from fingercalc import (
+    get_info_from_file,
+    count_to_score,
+    get_bust_orders,
+    BustOrder
+)
 from gui import plot_by_stat
 # from test import test_app
 
@@ -20,6 +26,30 @@ def normolize_finger_stress(finger_stress: dict[Finger, int]
         finger: stress / total * 100
         for finger, stress in finger_stress.items()
     }
+
+
+def rate_bust_order(*layouts: list[FingerLayout]) -> int:
+    '''
+    @brief Подсчитывает кол-во слов которые можно перебрать одной рукой.
+    @detailed Подсчитывает кол-во слов которые можно перебрать одной рукой для
+    любого количества рассладко (чтобы пройти файл за один раз). При этом если
+    перебор 'прямой', то начисляется 2 очка, а если же перебор 'обратный', то 1
+    (т.к. он сложнее [пианисты знают]).
+    '''
+    log.info('Начало подсчета очков за перебор слов одной рукой.')
+
+    score = [0 for _ in layouts]
+    with open('books/1grams-3.txt', 'rt', encoding='utf-8') as file:
+        for line in file:
+            orders = get_bust_orders(line.strip(), *layouts)
+
+            for i, order in enumerate(orders):
+                lorder, rorder = order
+                if BustOrder.DIRECT in (lorder, rorder):
+                    score[i] += 2
+                if BustOrder.REVERSE in (lorder, rorder):
+                    score[i] += 1
+    return score
 
 
 async def main() -> None:
@@ -45,6 +75,14 @@ async def main() -> None:
         sys.exit(1)
 
     statistics = await statistics
+
+    log.info(
+        'Очки за перебор одной рукой\n'
+        '\tЙЦУКЕН: %s\n'
+        '\tФонетический: %s\n'
+        '\tДиктор: %s\n',
+        *rate_bust_order(QWERTY_LAYOUT, PHON_LAYOUT, DIKTOR_LAYOUT)
+    )
 
     task_qwerty = count_to_score(statistics, QWERTY_LAYOUT)
     task_phon = count_to_score(statistics, PHON_LAYOUT)
