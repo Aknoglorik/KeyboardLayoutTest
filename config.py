@@ -23,8 +23,8 @@ ALPHABET: str = NUMERIC + WHITE_SPACES + PUNCTUATION + RUSSIAN
 type Digramms = dict[str, int]
 type FingerStat = tuple[Counter, Digramms]
 type Key = str
-type KeyInfo = list[tuple[Key, list[Modifier], int]]
-type FingerLayout = tuple[dict[Finger, KeyInfo], dict[Modifier, Finger]]
+type KeyInfo = tuple[Key, list[Modifier], int]
+type FingerLayout = tuple[dict[Finger, list[KeyInfo]], dict[Modifier, Finger]]
 
 
 class Finger(StrEnum):
@@ -87,7 +87,7 @@ def assert_modifiers(modifiers: dict[Modifier, Finger]) -> None | NoReturn:
         )
 
 
-def assert_data_structure(layout: dict[Finger, KeyInfo]) -> None:
+def assert_data_structure(layout: dict[Finger, list[KeyInfo]]) -> None:
     target_keys = ['score', 'letter', 'modifiers']
     for header, data in layout.items():
         if header not in Finger:
@@ -132,7 +132,7 @@ def load_layout(fname: str) -> Future[FingerLayout]:
 
 
 def key_to_finger(layout: FingerLayout
-                  ) -> dict[Key, tuple[Finger, list[Modifier]]]:
+                  ) -> dict[Key, KeyInfo]:
     '''
     @brief На основе полученной раскладки формирует словарь
     `Клавиша-(палец, модификаторы)`.
