@@ -136,10 +136,13 @@ def is_continue_row[T](prev_: T, next_: T, row: list[T]) -> bool:
 
 
 def get_bust_orders(text: str, *finger_layouts: list[FingerLayout]
-                    ) -> tuple[BustOrder, BustOrder]:
+                    ) -> list[tuple[BustOrder, BustOrder]]:
     '''
-    @return[0] способ перебора правой рукой
-    @return[1] способ перебора левой рукой
+    @return возвращает лист состоящий из кортежей, где i-ый элеемент отвечает на
+    вопрос "можно ли перебрать текст одной рукой" для i-ой раскладки. Кортеж
+    состоит из:
+        - [0] способ перебора правой рукой
+        - [1] способ перебора левой рукой
     '''
     filtred_text = ''.join(filter(isRussian, text))
     if len(filtred_text) < 2 or filtred_text != text:
