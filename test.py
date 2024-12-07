@@ -39,11 +39,14 @@ class TestLayoutOrders(IsolatedAsyncioTestCase) :
     
         result = [(fingercalc.BustOrder.DIRECT,fingercalc.BustOrder.NONE)]
         my_date1 = fingercalc.get_bust_orders('фыва',qwerty_layout)
-        my_date2 = fingercalc.get_bust_orders('заря',diktor_layout)
-        my_date3 = fingercalc.get_bust_orders('рома',phon_layout)
-        my_date4 = fingercalc.get_bust_orders('вася',phon_layout,qwerty_layout)
+        my_date2 = fingercalc.get_bust_orders('уэеа',diktor_layout)
+        my_date3 = fingercalc.get_bust_orders('ювдф',phon_layout)
+        my_date4 = fingercalc.get_bust_orders('йцук',qwerty_layout)
     
-        self.assertEqual(result, my_date1, my_date2)                                     
+        self.assertEqual(result, my_date1)
+        self.assertEqual(result, my_date2)
+        self.assertEqual(result, my_date3)
+        self.assertEqual(result, my_date4)
         pass
 
     def test_isRussian(self):
