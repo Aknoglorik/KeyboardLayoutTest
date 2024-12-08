@@ -77,12 +77,14 @@ async def main() -> None:
 
     statistics = await statistics
 
+    score_list = rate_bust_order(QWERTY_LAYOUT, PHON_LAYOUT, DIKTOR_LAYOUT)
+
     log.info(
         'Очки за перебор одной рукой\n'
         '\tЙЦУКЕН: %s\n'
         '\tФонетический: %s\n'
         '\tДиктор: %s\n',
-        *rate_bust_order(QWERTY_LAYOUT, PHON_LAYOUT, DIKTOR_LAYOUT)
+        *score_list
     )
 
     task_qwerty = count_to_score(statistics, QWERTY_LAYOUT)
@@ -97,13 +99,14 @@ async def main() -> None:
     )
 
     plot_by_stat(
+        score_list,
         finger_stress_qwerty,
         finger_stress_phon,
         finger_stress_diktor,
         layout='ЙЦУКЕН',
         layout2='Русский фонетический',
         layout3='Диктор',
-        txt_name='Война и мир'
+        txt_name='Война и мир',
     )
 
 
