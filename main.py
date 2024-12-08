@@ -86,7 +86,7 @@ async def main() -> None:
     threegramms = '\n'.join(threegramms.keys())
 
     # lab4
-    scores, total = rate_bust_order(
+    scores_most, total = rate_bust_order(
         most_common_digramms,
         QWERTY_LAYOUT,
         PHON_LAYOUT,
@@ -97,11 +97,11 @@ async def main() -> None:
         f'\tЙЦУКЕН: %s {total}\n'
         f'\tФонетический: %s {total}\n'
         f'\tДиктор: %s {total}\n',
-        *scores
+        *scores_most
     )
 
     # lab5
-    scores, total = rate_bust_order(
+    scores_dig, total = rate_bust_order(
         digramms,
         QWERTY_LAYOUT,
         PHON_LAYOUT,
@@ -112,10 +112,10 @@ async def main() -> None:
         f'\tЙЦУКЕН: %s {total}\n'
         f'\tФонетический: %s {total}\n'
         f'\tДиктор: %s {total}\n',
-        *scores
+        *scores_dig
     )
 
-    scores, total = rate_bust_order(
+    scores_three, total = rate_bust_order(
         threegramms,
         QWERTY_LAYOUT,
         PHON_LAYOUT,
@@ -126,7 +126,7 @@ async def main() -> None:
         f'\tЙЦУКЕН: %s {total}\n'
         f'\tФонетический: %s {total}\n'
         f'\tДиктор: %s {total}\n',
-        *scores
+        *scores_three
     )
 
     task_qwerty = count_to_score(statistics, QWERTY_LAYOUT)
@@ -139,6 +139,8 @@ async def main() -> None:
             await asyncio.gather(task_qwerty, task_phon, task_diktor)
         )
     )
+
+    scores = [scores_most, scores_dig, scores_three]
 
     plot_by_stat(
         scores,
