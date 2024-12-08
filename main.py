@@ -28,7 +28,7 @@ def normolize_finger_stress(finger_stress: dict[Finger, int]
     }
 
 
-def rate_bust_order(digramms: str, *layouts: list[FingerLayout]
+def rate_bust_order(text: str, *layouts: list[FingerLayout]
                     ) -> tuple[list[int], int]:
     '''
     @brief Подсчитывает кол-во слов которые можно перебрать одной рукой.
@@ -37,12 +37,10 @@ def rate_bust_order(digramms: str, *layouts: list[FingerLayout]
     учитывается только 'прямой' перебор (т.к. он легче [пианисты знают]).
     @return Возращает список очков для каждой раскладки
     '''
-    log.info('Начало подсчета очков за перебор слов одной рукой.')
-
     scores = [0 for _ in layouts]
     total = 0
-    for line in digramms.split():
-        orders = get_bust_orders(line.strip(), *layouts)
+    for word in text.split():
+        orders = get_bust_orders(word.strip(), *layouts)
 
         for i, order in enumerate(orders):
             lorder, rorder = order
@@ -64,6 +62,7 @@ async def main() -> None:
     DIKTOR_LAYOUT: asyncio.Future = load_layout(r'testlayouts/diktor.toml')
 
     statistics: asyncio.Future = get_info_from_file('books/war_and_peace.txt')
+    dt_statistics: asyncio.Future = get_info_from_file('books/1grams-3.txt')
 
     try:
         layouts = await asyncio.gather(
@@ -75,21 +74,55 @@ async def main() -> None:
         log.error('Не удалось загрузить расскладку:\n %s', e)
         sys.exit(1)
 
-    statistics = await statistics
-    _, digramms = statistics
+    statistics, dt_statistics = await asyncio.gather(
+        statistics, dt_statistics
+    )
 
+    statistics, most_common_digramms, _ = statistics
+    _, digramms, threegramms = dt_statistics
+
+    most_common_digramms = '\n'.join(most_common_digramms.keys())
     digramms = '\n'.join(digramms.keys())
+    threegramms = '\n'.join(threegramms.keys())
 
+    # lab4
+    scores, total = rate_bust_order(
+        most_common_digramms,
+        QWERTY_LAYOUT,
+        PHON_LAYOUT,
+        DIKTOR_LAYOUT
+    )
+    log.info(
+        'Очки за перебор одной рукой наиболее распространенных диграмм\n'
+        f'\tЙЦУКЕН: %s {total}\n'
+        f'\tФонетический: %s {total}\n'
+        f'\tДиктор: %s {total}\n',
+        *scores
+    )
+
+    # lab5
     scores, total = rate_bust_order(
         digramms,
         QWERTY_LAYOUT,
         PHON_LAYOUT,
         DIKTOR_LAYOUT
     )
-
-    log.info('%s %s', scores, total)
     log.info(
-        'Очки за перебор одной рукой\n'
+        'Очки за перебор одной рукой диграмм из 1grams-3\n'
+        f'\tЙЦУКЕН: %s {total}\n'
+        f'\tФонетический: %s {total}\n'
+        f'\tДиктор: %s {total}\n',
+        *scores
+    )
+
+    scores, total = rate_bust_order(
+        threegramms,
+        QWERTY_LAYOUT,
+        PHON_LAYOUT,
+        DIKTOR_LAYOUT
+    )
+    log.info(
+        'Очки за перебор одной рукой триграмм из 1grams-3\n'
         f'\tЙЦУКЕН: %s {total}\n'
         f'\tФонетический: %s {total}\n'
         f'\tДиктор: %s {total}\n',

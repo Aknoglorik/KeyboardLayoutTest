@@ -175,7 +175,7 @@ def count_keys_by_modifiers(key_mods: list[str],
     return score
 
 
-async def _count_to_score(stat: FingerStat, finger_layout: FingerLayout,
+async def _count_to_score(symbols: Counter, finger_layout: FingerLayout,
                           future: Future) -> dict[Finger, int]:
 
     def _addictive_merge_dicts(*sources: dict[str, int]) -> dict[str, int]:
@@ -191,8 +191,6 @@ async def _count_to_score(stat: FingerStat, finger_layout: FingerLayout,
     key_finger = key_to_finger(layout)
     score = dict.fromkeys([finger.value for finger in Finger], 0)
 
-    symbols, digramms = stat
-
     for key, amount in symbols.items():
         await asyncio.sleep(0)
         finger, mods, finger_score = key_finger[key]
@@ -204,13 +202,13 @@ async def _count_to_score(stat: FingerStat, finger_layout: FingerLayout,
     future.set_result(score)
 
 
-def count_to_score(stat: FingerStat, finger_layout: FingerLayout
+def count_to_score(symbols: Counter, finger_layout: FingerLayout
                    ) -> Future[dict[Finger, int]]:
     '''
     @brief На основе полученной `статистики` подсчитывает кол-во очков для
     '''
     score = Future()
-    asyncio.create_task(_count_to_score(stat, finger_layout, score))
+    asyncio.create_task(_count_to_score(symbols, finger_layout, score))
 
     return score
 
@@ -224,20 +222,25 @@ def isRussian(ch: str) -> str:
     return ch in ALPHABET
 
 
+def count_ngramms(text: str, n: int) -> Counter:
+    if n < 1:
+        raise ValueError('ngramm cant have size less that 1.')
+
+    ngramms = Counter()
+    for word in text.strip().split():
+        for i in range(len(word) - n + 1):
+            ngramm = word[i:i+n]
+            ngramms[ngramm] += 1
+
+    return ngramms
+
+
 async def _get_info_from_file(fname: str, future: Future) -> None:
     log.info('Start read file: %s', fname)
 
-    def _count_digramms(text: str) -> Counter:
-        digramms = Counter()
-        for word in text.strip().split():
-            for i in range(len(word) - 1):
-                digramm = word[i:i+2]
-                digramms[digramm] += 1
-
-        return digramms
-
     symbols = Counter()
     digramms = Counter()
+    threegramms = Counter()
     translate_punct2space = str.maketrans(PUNCTUATION, ' ' * len(PUNCTUATION))
 
     with open(fname, 'rt', encoding='utf-8') as file:
@@ -255,10 +258,11 @@ async def _get_info_from_file(fname: str, future: Future) -> None:
             filtred_line = ''.join(
                 filter(lambda x: x in RUSSIAN+WHITE_SPACES, punct_less_line)
             )
-            digramms.update(_count_digramms(filtred_line))
+            digramms.update(count_ngramms(filtred_line, 2))
+            threegramms.update(count_ngramms(filtred_line, 3))
 
     log.info('End read file: %s', fname)
-    future.set_result((symbols, digramms))
+    future.set_result((symbols, digramms, threegramms))
 
 
 def get_info_from_file(fname: str) -> Future[FingerStat]:
