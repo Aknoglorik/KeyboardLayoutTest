@@ -138,8 +138,8 @@ def is_continue_row[T](prev_: T, next_: T, row: list[T]) -> bool:
 def get_bust_orders(text: str, *finger_layouts: list[FingerLayout]
                     ) -> list[tuple[BustOrder, BustOrder]]:
     '''
-    @return возвращает лист состоящий из кортежей, где i-ый элеемент отвечает на
-    вопрос "можно ли перебрать текст одной рукой" для i-ой раскладки. Кортеж
+    @return возвращает лист состоящий из кортежей, где i-ый элеемент отвечает
+    на вопрос "можно ли перебрать текст одной рукой" для i-ой раскладки. Кортеж
     состоит из:
         - [0] способ перебора правой рукой
         - [1] способ перебора левой рукой
@@ -197,7 +197,7 @@ async def _count_to_score(stat: FingerStat, finger_layout: FingerLayout,
         await asyncio.sleep(0)
         finger, mods, finger_score = key_finger[key]
         mods_score = count_keys_by_modifiers(mods, modifiers, amount)
-        score[finger] += amount * finger_score
+        score[finger] += amount * (1 + finger_score)
         score = _addictive_merge_dicts(score, mods_score)
 
     log.info('End count score')

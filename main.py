@@ -28,29 +28,29 @@ def normolize_finger_stress(finger_stress: dict[Finger, int]
     }
 
 
-def rate_bust_order(*layouts: list[FingerLayout]) -> list[int]:
+def rate_bust_order(digramms: str, *layouts: list[FingerLayout]
+                    ) -> tuple[list[int], int]:
     '''
     @brief Подсчитывает кол-во слов которые можно перебрать одной рукой.
     @detailed Подсчитывает кол-во слов которые можно перебрать одной рукой для
-    любого количества рассладко (чтобы пройти файл за один раз). При этом если
-    перебор 'прямой', то начисляется 2 очка, а если же перебор 'обратный', то 1
-    (т.к. он сложнее [пианисты знают]).
+    любого количества рассладок (чтобы пройти файл за один раз). При этом
+    учитывается только 'прямой' перебор (т.к. он легче [пианисты знают]).
     @return Возращает список очков для каждой раскладки
     '''
     log.info('Начало подсчета очков за перебор слов одной рукой.')
 
-    score = [0 for _ in layouts]
-    with open('books/1grams-3.txt', 'rt', encoding='utf-8') as file:
-        for line in file:
-            orders = get_bust_orders(line.strip(), *layouts)
+    scores = [0 for _ in layouts]
+    total = 0
+    for line in digramms.split():
+        orders = get_bust_orders(line.strip(), *layouts)
 
-            for i, order in enumerate(orders):
-                lorder, rorder = order
-                if BustOrder.DIRECT in (lorder, rorder):
-                    score[i] += 2
-                if BustOrder.REVERSE in (lorder, rorder):
-                    score[i] += 1
-    return score
+        for i, order in enumerate(orders):
+            lorder, rorder = order
+            if BustOrder.DIRECT in (lorder, rorder):
+                scores[i] += 1
+        total += 1
+
+    return scores, total
 
 
 async def main() -> None:
@@ -76,15 +76,24 @@ async def main() -> None:
         sys.exit(1)
 
     statistics = await statistics
+    _, digramms = statistics
 
-    score_list = rate_bust_order(QWERTY_LAYOUT, PHON_LAYOUT, DIKTOR_LAYOUT)
+    digramms = '\n'.join(digramms.keys())
 
+    scores, total = rate_bust_order(
+        digramms,
+        QWERTY_LAYOUT,
+        PHON_LAYOUT,
+        DIKTOR_LAYOUT
+    )
+
+    log.info('%s %s', scores, total)
     log.info(
         'Очки за перебор одной рукой\n'
-        '\tЙЦУКЕН: %s\n'
-        '\tФонетический: %s\n'
-        '\tДиктор: %s\n',
-        *score_list
+        f'\tЙЦУКЕН: %s {total}\n'
+        f'\tФонетический: %s {total}\n'
+        f'\tДиктор: %s {total}\n',
+        *scores
     )
 
     task_qwerty = count_to_score(statistics, QWERTY_LAYOUT)
@@ -99,7 +108,7 @@ async def main() -> None:
     )
 
     plot_by_stat(
-        score_list,
+        scores,
         finger_stress_qwerty,
         finger_stress_phon,
         finger_stress_diktor,
