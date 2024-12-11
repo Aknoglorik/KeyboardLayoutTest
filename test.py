@@ -3,7 +3,6 @@ import config
 import fingercalc
 from unittest import IsolatedAsyncioTestCase
 
-events = []
 
 class TestConfig(unittest.TestCase):
     '''
@@ -24,25 +23,27 @@ class TestFingerCalc(IsolatedAsyncioTestCase):
     '''
     @brief Класс для тестирования корректности функций рассчета кол-ва нажатий.
     '''
-class TestLayoutOrders(IsolatedAsyncioTestCase) :
-    async def test_get_bust_orders(self):   
+
+
+class TestLayoutOrders(IsolatedAsyncioTestCase):
+    async def test_get_bust_orders(self):
         '''
-        @brief возвращает лист состоящий из кортежей, где i-ый элеемент отвечает на
-        вопрос "можно ли перебрать текст одной рукой" для i-ой раскладки. Кортеж
-        состоит из:
+        @brief возвращает лист состоящий из кортежей, где i-ый элеемент
+        отвечает на вопрос "можно ли перебрать текст одной рукой" для i-ой
+        раскладки. Кортеж состоит из:
             - [0] способ перебора правой рукой
             - [1] способ перебора левой рукой
         '''
         qwerty_layout = await config.load_layout(r'testlayouts/qwerty.toml')
         diktor_layout = await config.load_layout(r'testlayouts/diktor.toml')
         phon_layout = await config.load_layout(r'testlayouts/phonetikal.toml')
-    
-        result = [(fingercalc.BustOrder.DIRECT,fingercalc.BustOrder.NONE)]
-        my_date1 = fingercalc.get_bust_orders('фыва',qwerty_layout)
-        my_date2 = fingercalc.get_bust_orders('уэеа',diktor_layout)
-        my_date3 = fingercalc.get_bust_orders('ювдф',phon_layout)
-        my_date4 = fingercalc.get_bust_orders('йцук',qwerty_layout)
-    
+
+        result = [(fingercalc.BustOrder.DIRECT, fingercalc.BustOrder.NONE)]
+        my_date1 = fingercalc.get_bust_orders('фыва', qwerty_layout)
+        my_date2 = fingercalc.get_bust_orders('уэеа', diktor_layout)
+        my_date3 = fingercalc.get_bust_orders('ювдф', phon_layout)
+        my_date4 = fingercalc.get_bust_orders('йцук', qwerty_layout)
+
         self.assertEqual(result, my_date1)
         self.assertEqual(result, my_date2)
         self.assertEqual(result, my_date3)
