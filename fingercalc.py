@@ -175,28 +175,29 @@ def count_keys_by_modifiers(key_mods: list[str],
     return score
 
 
+def addictive_merge_dicts(*sources: dict[str, int]) -> dict[str, int]:
+    result = defaultdict(int)
+    log.info(sources)
+    for sorce in sources:
+        for key, value in sorce.items():
+            result[key] += value
+    return result
+
+
 async def _count_to_score(symbols: Counter, finger_layout: FingerLayout,
                           future: Future) -> dict[Finger, int]:
-
-    def _addictive_merge_dicts(*sources: dict[str, int]) -> dict[str, int]:
-        result = defaultdict(int)
-        for sorce in sources:
-            for key, value in sorce.items():
-                result[key] += value
-        return result
-
     log.info('Start counting score')
 
     layout, modifiers = finger_layout
     key_finger = key_to_finger(layout)
-    score = dict.fromkeys([finger.value for finger in Finger], 0)
+    score = {finger.value: 0 for finger in Finger}
 
     for key, amount in symbols.items():
         await asyncio.sleep(0)
         finger, mods, finger_score = key_finger[key]
         mods_score = count_keys_by_modifiers(mods, modifiers, amount)
-        score[finger] += amount * (1 + finger_score)
-        score = _addictive_merge_dicts(score, mods_score)
+        score[finger] += amount
+        score = addictive_merge_dicts(score, mods_score)
 
     log.info('End count score')
     future.set_result(score)
@@ -211,6 +212,21 @@ def count_to_score(symbols: Counter, finger_layout: FingerLayout
     asyncio.create_task(_count_to_score(symbols, finger_layout, score))
 
     return score
+
+
+def calc_penalty(statistic: Counter, finger_layout: FingerLayout
+                 ) -> dict[Finger, int]:
+    '''
+    @brief Поиск штрафов для каждого пальца.
+    '''
+    layout, modifiers = finger_layout
+    key_finger = key_to_finger(layout)
+    penalty = {finger.value: 0 for finger in Finger}
+    for key, amount in statistic.items():
+        finger, mods, finger_score = key_finger[key]
+        penalty[finger] += finger_score * amount
+
+    return penalty
 
 
 def isRussian(ch: str) -> str:

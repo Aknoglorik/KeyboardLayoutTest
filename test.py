@@ -110,7 +110,7 @@ class TestLayoutOrders(IsolatedAsyncioTestCase):
         клавиши (get_info_from_file) и подсчитывание кол-ва нажатий пальцем.
         '''
         QWERTY_LAYOUT = await config.load_layout(r'testlayouts/qwerty.toml')
-        text = await fingercalc.get_info_from_file('testfiles/test.txt')
+        text, _, _ = await fingercalc.get_info_from_file('testfiles/test.txt')
         my_date = await fingercalc.count_to_score(text, QWERTY_LAYOUT)
         date = {
           'lpinky': 0,
