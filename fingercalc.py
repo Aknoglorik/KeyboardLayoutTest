@@ -18,7 +18,26 @@ from collections import Counter, defaultdict
 from functools import partial
 from enum import Enum, auto
 
+from typing import Callable
 import logging as log
+
+
+type IChecker = Callable[
+    [Finger, Finger, list[Finger]],
+    tuple[BustOrder, BustOrder]
+]
+
+
+def is_continue_row[T](prev_: T, next_: T, row: list[T]) -> bool:
+    if prev_ not in row or next_ not in row:
+        return False
+    return row.index(prev_) < row.index(next_)
+
+
+def is_continue_or_eq_row[T](prev_: T, next_: T, row: list[T]) -> bool:
+    if prev_ not in row or next_ not in row:
+        return False
+    return row.index(prev_) <= row.index(next_)
 
 
 class BustOrder(Enum):
@@ -52,7 +71,9 @@ class LayoutOrders:
     ]
 
     @classmethod
-    def check_text_bust_order(cls, text: str, key_finger: dict[Key, KeyInfo]):
+    def check_text_bust_order(cls, text: str, key_finger: dict[Key, KeyInfo],
+                              checker: IChecker = is_continue_or_eq_row):
+
         prev_finger, mods, _ = key_finger[text[0]]
         if mods:
             return BustOrder.NONE, BustOrder.NONE
@@ -69,7 +90,7 @@ class LayoutOrders:
 
             left_hand_direct = (
                 left_hand_direct and
-                is_continue_row(
+                checker(
                     prev_finger,
                     next_finger,
                     cls.lfinger_order
@@ -77,7 +98,7 @@ class LayoutOrders:
             )
             left_hand_reverse = (
                 left_hand_reverse and
-                is_continue_row(
+                checker(
                     prev_finger,
                     next_finger,
                     cls.rev_lfinger_order
@@ -85,7 +106,7 @@ class LayoutOrders:
             )
             right_hand_direct = (
                 right_hand_direct and
-                is_continue_row(
+                checker(
                     prev_finger,
                     next_finger,
                     cls.rfinger_order
@@ -93,7 +114,7 @@ class LayoutOrders:
             )
             right_hand_reverse = (
                 right_hand_reverse and
-                is_continue_row(
+                checker(
                     prev_finger,
                     next_finger,
                     cls.rev_rfinger_order
@@ -129,13 +150,8 @@ class LayoutOrders:
         return left_hand, right_hand
 
 
-def is_continue_row[T](prev_: T, next_: T, row: list[T]) -> bool:
-    if prev_ not in row or next_ not in row:
-        return False
-    return row.index(prev_) < row.index(next_)
-
-
-def get_bust_orders(text: str, *finger_layouts: list[FingerLayout]
+def get_bust_orders(text: str, *finger_layouts: list[FingerLayout],
+                    checker: IChecker = is_continue_row
                     ) -> list[tuple[BustOrder, BustOrder]]:
     '''
     @return возвращает лист состоящий из кортежей, где i-ый элеемент отвечает
@@ -152,7 +168,7 @@ def get_bust_orders(text: str, *finger_layouts: list[FingerLayout]
     key_fingers = list(map(key_to_finger, layouts))
 
     return list(map(
-        partial(LayoutOrders.check_text_bust_order, text),
+        partial(LayoutOrders.check_text_bust_order, text, checker=checker),
         key_fingers
     ))
 
@@ -177,7 +193,6 @@ def count_keys_by_modifiers(key_mods: list[str],
 
 def addictive_merge_dicts(*sources: dict[str, int]) -> dict[str, int]:
     result = defaultdict(int)
-    log.info(sources)
     for sorce in sources:
         for key, value in sorce.items():
             result[key] += value

@@ -10,12 +10,13 @@ from fingercalc import (
     count_to_score,
     calc_penalty,
     get_bust_orders,
-    BustOrder
+    BustOrder,
 )
 from gui import plot_by_stat
 # from test import test_app
 
 import sys
+import csv
 
 import logging as log
 
@@ -30,7 +31,7 @@ def normolize_finger_stress(finger_stress: dict[Finger, int]
 
 
 def rate_bust_order(text: str, *layouts: list[FingerLayout]
-                    ) -> tuple[list[int], int]:
+                    ) -> tuple[dict[BustOrder, int], dict[BustOrder, int]]:
     '''
     @brief Подсчитывает кол-во слов которые можно перебрать одной рукой.
     @detailed Подсчитывает кол-во слов которые можно перебрать одной рукой для
@@ -38,18 +39,56 @@ def rate_bust_order(text: str, *layouts: list[FingerLayout]
     учитывается только 'прямой' перебор (т.к. он легче [пианисты знают]).
     @return Возращает список очков для каждой раскладки
     '''
-    scores = [0 for _ in layouts]
-    total = 0
+    lscores = [{
+            BustOrder.DIRECT: 0,
+            BustOrder.REVERSE: 0,
+            BustOrder.NONE: 0
+        }
+        for _ in layouts
+    ]
+    rscores = [{
+            BustOrder.DIRECT: 0,
+            BustOrder.REVERSE: 0,
+            BustOrder.NONE: 0
+        }
+        for _ in layouts
+    ]
+
     for word in text.split():
         orders = get_bust_orders(word.strip(), *layouts)
-
         for i, order in enumerate(orders):
             lorder, rorder = order
-            if BustOrder.DIRECT in (lorder, rorder):
-                scores[i] += 1
-        total += 1
+            rscores[i][rorder] += 1
+            lscores[i][lorder] += 1
 
-    return scores, total
+    return lscores, rscores
+
+
+def rate_most_common_digramms(*layouts: list[FingerLayout]
+                              ) -> tuple[list[int], int]:
+    '''
+    @brief Подсчет удобных и неудобных приколов.
+    '''
+    with open(r'books/sortchbukw.csv', encoding='utf-8',
+              newline='') as csv_file:
+
+        reader = csv.reader(csv_file, delimiter=',')
+        digramms = ''
+        for line in reader:
+            digramms += line[1].strip() + '\n'
+
+    scores_most = rate_bust_order(
+        digramms,
+        *layouts
+    )
+    log.info(
+        'Очки за перебор одной рукой наиболее распространенных диграмм\n'
+        '\t Левая рука %s\n'
+        '\t Правая рука %s\n',
+        scores_most[0],
+        scores_most[1]
+    )
+    return scores_most
 
 
 async def main() -> None:
@@ -75,6 +114,8 @@ async def main() -> None:
         log.error('Не удалось загрузить расскладку:\n %s', e)
         sys.exit(1)
 
+    rate_most_common_digramms(QWERTY_LAYOUT, PHON_LAYOUT, DIKTOR_LAYOUT)
+
     statistics, dt_statistics = await asyncio.gather(
         statistics, dt_statistics
     )
@@ -87,7 +128,7 @@ async def main() -> None:
     threegramms = '\n'.join(threegramms.keys())
 
     # lab4
-    scores_most, total = rate_bust_order(
+    scores_most = rate_bust_order(
         most_common_digramms,
         QWERTY_LAYOUT,
         PHON_LAYOUT,
@@ -95,14 +136,14 @@ async def main() -> None:
     )
     log.info(
         'Очки за перебор одной рукой наиболее распространенных диграмм\n'
-        f'\tЙЦУКЕН: %s {total}\n'
-        f'\tФонетический: %s {total}\n'
-        f'\tДиктор: %s {total}\n',
-        *scores_most
+        '\t Левая рука %s\n'
+        '\t Правая рука %s\n',
+        scores_most[0],
+        scores_most[1]
     )
 
     # lab5
-    scores_dig, total = rate_bust_order(
+    scores_dig = rate_bust_order(
         digramms,
         QWERTY_LAYOUT,
         PHON_LAYOUT,
@@ -110,13 +151,13 @@ async def main() -> None:
     )
     log.info(
         'Очки за перебор одной рукой диграмм из 1grams-3\n'
-        f'\tЙЦУКЕН: %s {total}\n'
-        f'\tФонетический: %s {total}\n'
-        f'\tДиктор: %s {total}\n',
-        *scores_dig
+        '\t Левая рука %s\n'
+        '\t Правая рука %s\n',
+        scores_dig[0],
+        scores_dig[1]
     )
 
-    scores_three, total = rate_bust_order(
+    scores_three = rate_bust_order(
         threegramms,
         QWERTY_LAYOUT,
         PHON_LAYOUT,
@@ -124,10 +165,10 @@ async def main() -> None:
     )
     log.info(
         'Очки за перебор одной рукой триграмм из 1grams-3\n'
-        f'\tЙЦУКЕН: %s {total}\n'
-        f'\tФонетический: %s {total}\n'
-        f'\tДиктор: %s {total}\n',
-        *scores_three
+        '\t Левая рука %s\n'
+        '\t Правая рука %s\n',
+        scores_three[0],
+        scores_three[1]
     )
 
     task_qwerty = count_to_score(statistics, QWERTY_LAYOUT)
