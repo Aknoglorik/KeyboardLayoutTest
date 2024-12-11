@@ -114,32 +114,19 @@ async def main() -> None:
         log.error('Не удалось загрузить расскладку:\n %s', e)
         sys.exit(1)
 
-    rate_most_common_digramms(QWERTY_LAYOUT, PHON_LAYOUT, DIKTOR_LAYOUT)
-
     statistics, dt_statistics = await asyncio.gather(
         statistics, dt_statistics
     )
 
-    statistics, most_common_digramms, _ = statistics
+    statistics, _, _ = statistics
     _, digramms, threegramms = dt_statistics
 
-    most_common_digramms = '\n'.join(most_common_digramms.keys())
     digramms = '\n'.join(digramms.keys())
     threegramms = '\n'.join(threegramms.keys())
 
     # lab4
-    scores_most = rate_bust_order(
-        most_common_digramms,
-        QWERTY_LAYOUT,
-        PHON_LAYOUT,
-        DIKTOR_LAYOUT
-    )
-    log.info(
-        'Очки за перебор одной рукой наиболее распространенных диграмм\n'
-        '\t Левая рука %s\n'
-        '\t Правая рука %s\n',
-        scores_most[0],
-        scores_most[1]
+    scores_most = rate_most_common_digramms(
+        QWERTY_LAYOUT, PHON_LAYOUT, DIKTOR_LAYOUT
     )
 
     # lab5
@@ -171,6 +158,7 @@ async def main() -> None:
         scores_three[1]
     )
 
+    # Lab1
     task_qwerty = count_to_score(statistics, QWERTY_LAYOUT)
     task_phon = count_to_score(statistics, PHON_LAYOUT)
     task_diktor = count_to_score(statistics, DIKTOR_LAYOUT)
@@ -180,6 +168,8 @@ async def main() -> None:
     )
 
     scores = [scores_most, scores_dig, scores_three]
+
+    # Lab3
     finger_penalty_qwerty, finger_penalty_phon, finger_penalty_diktor = list(
         map(
             lambda x: calc_penalty(*x),
