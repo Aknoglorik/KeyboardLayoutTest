@@ -1,7 +1,7 @@
 import matplotlib.pyplot as plt
 from matplotlib.widgets import Button
 from config import Finger
-
+from fingercalc import BustOrder
 
 class StatisticDrawer:
     def __init__(self, labels, loads, txt_name, layouts, score, names):
@@ -12,11 +12,15 @@ class StatisticDrawer:
         self.txt_name = txt_name
 
         self.names = names
-        self.score = [list(x) for x in zip(*score)]
+        self.score = score
 
         self.width = 0.3
         self.num_groups = len(labels)
         self.x_pos = list(range(self.num_groups))
+        self.x_pos2 = list(range(len(names)))
+
+        self.max_score1 = max(self.loads[0])
+        self.max_score2 = max(self.score[2])
 
         self.colors_list = [
             'red',
@@ -65,40 +69,45 @@ class StatisticDrawer:
         self.draw_value(self.bars2, ax)
         self.draw_value(self.bars3, ax)
 
-    def draw_axs(self, ax, position, name):
-        self.draw_bars(ax, self.x_pos, position, self.loads, self.layouts,
+    def draw_axs(self, ax, position, name, x_pos, loads, labels, max_score):
+        self.draw_bars(ax, x_pos, position, loads, self.layouts,
                        self.width)
-
-        ax.set_ylabel('Проценты нагрузки (%)')
+        ax.set_ylabel('Очки нагрузки')
         ax.set_title(f'Нагрузка на {name} руке')
-        ax.set_xticks(self.x_pos[position])
-        ax.set_xticklabels(self.labels[position])
+        ax.set_xticks(x_pos[position])
+        ax.set_xticklabels(labels[position])
         ax.legend()
 
-        ax.set_ylim(0, max(self.loads[0]) + 5)
+        ax.set_ylim(0, max_score + (max_score/6))
 
     def click_button(self, event):
         if self.show_button:
             self.ax1.set_visible(False)
             self.ax2.set_visible(False)
+            self.title1.set_visible(False)
             if len(self.fig.get_axes()) > 2:
                 self.fig.delaxes(self.fig.get_axes()[2])
 
-            ax_single = self.fig.add_subplot(111)
-            self.draw_bars(ax_single, list(range(len(self.names))),
-                           slice(None), self.score, self.layouts, self.width)
-
-            ax_single.set_ylim(0, max(self.score[2]) + 50)
-            ax_single.set_xticks(list(range(len(self.names))))
-            ax_single.set_xticklabels(self.names)
-            ax_single.legend()
+            self.title2 = self.fig.suptitle(
+            'Очки за перебор одной рукой',
+            fontsize=16
+            )
+            self.ax3 = self.fig.add_subplot(1,2,1)
+            self.ax4 = self.fig.add_subplot(1,2,2)
+            
+            self.draw_axs(self.ax3, slice(None, 3), 'левой', self.x_pos2, self.score, self.names, self.max_score2)
+            self.draw_axs(self.ax4, slice(3, None), 'правой', self.x_pos2, self.score, self.names, self.max_score2)
 
             self.show_button = False
         else:
             if len(self.fig.get_axes()) > 2:
                 self.fig.delaxes(self.fig.get_axes()[2])
+            self.ax3.set_visible(False)
+            self.ax4.set_visible(False)
+            self.title2.set_visible(False)
             self.ax1.set_visible(True)
             self.ax2.set_visible(True)
+            self.title1.set_visible(True)
             self.show_button = True
 
         plt.gcf().canvas.draw_idle()
@@ -106,13 +115,14 @@ class StatisticDrawer:
     def show_result(self):
 
         self.fig, (self.ax1, self.ax2) = plt.subplots(1, 2, figsize=(10, 5))
-        self.fig.suptitle(
+        
+        self.title1 = self.fig.suptitle(
             f'Нагрузка на пальцы\n Текст - {self.txt_name}',
             fontsize=16
         )
 
-        self.draw_axs(self.ax1, slice(None, 4), 'левой')
-        self.draw_axs(self.ax2, slice(4, None), 'правой')
+        self.draw_axs(self.ax1, slice(None, 4), 'левой', self.x_pos, self.loads, self.labels, self.max_score1)
+        self.draw_axs(self.ax2, slice(4, None), 'правой', self.x_pos, self.loads, self.labels, self.max_score1)
 
         ax_button = plt.axes([0.02, 0.9, 0.1, 0.075])  # l/b/w/h
         button = Button(ax_button, 'switch')
@@ -141,6 +151,12 @@ def plot_by_stat(
     loads3 = [statistic3[name.value] for name in fingers]
     loads_list = [loads1, loads2, loads3]
 
+   # очки/рука/раскладка
+    scores1 = [score[i][j][0].get(BustOrder.DIRECT) for i in range(3) for j in range(2)]
+    scores2 = [score[i][j][1].get(BustOrder.DIRECT) for i in range(3) for j in range(2)]
+    scores3 = [score[i][j][2].get(BustOrder.DIRECT) for i in range(3) for j in range(2)]
+    score_list = [scores1, scores2, scores3]
+
     layout_list = [layout, layout2, layout3]
 
     labels = [
@@ -155,18 +171,20 @@ def plot_by_stat(
     ]
 
     names = [
-        'Очки за перебор одной рукой \nнаиболее распространенных диграмм',
-        'Очки за перебор одной рукой \nдиграмм из 1grams-3',
-        'Очки за перебор одной рукой \nтриграмм из 1grams-3'
+        'Наиболее \nраспространенных диграмм',
+        'Диграмм \nиз 1grams-3',
+        'Триграмм \nиз 1grams-3'
     ]
+
+    new_names = names *2
 
     draw = StatisticDrawer(
         labels,
         loads_list,
         txt_name,
         layout_list,
-        score,
-        names
+        score_list,
+        new_names
     )
     draw.show_result()
 
