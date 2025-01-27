@@ -4,12 +4,13 @@
 
 ## Раскладки
 Участники сегодняшнего состязания - это раскладки:
+
 Диктор:
-![[img/In_1.png]]
+![Расскладка диктор](https://github.com/Aknoglorik/KeyboardLayoutTest/blob/main/img/In_1.png?raw=true)
 Русский Фонетический:
-![[img/In_2.png]]
+![Расскладка русский фонетический](https://github.com/Aknoglorik/KeyboardLayoutTest/blob/main/img/In_2.png?raw=true)
 И великий и ужасный QWERTY:
-![[img/In_3.jpg]]
+![Расскладка ЙЦУКЕН](https://github.com/Aknoglorik/KeyboardLayoutTest/blob/main/img/In_3.jpg?raw=true)
 
 ## Тексты лабораторных
 1. Взяв две раскладки (`QWERTY` и `одну по выбору`), вычислить нагрузки на каждый палец рук. Вывести результаты в графической форме, те в виде гистограмм для 10 пальцев;
@@ -29,15 +30,14 @@ pip install -r requirements.txt
 ```
 
 Предполагается, что количество смены языка настолько мало, что при большом объеме текста можно не учитывать подряд идущие иностранные символы (т.е. те для которых нужно переключится на другой язык).
-![[img/meme_1.jpeg]]
+![картинка](https://github.com/Aknoglorik/KeyboardLayoutTest/blob/main/img/meme_1.jpeg?raw=true)
 Переходим к результатам.
 
 ## Результат:
-![[img/out_1.png]]
-![[img/out_2.png]]
+![Результат 1](https://github.com/Aknoglorik/KeyboardLayoutTest/blob/main/img/Out1.png?raw=true)
+![Результат 2](https://github.com/Aknoglorik/KeyboardLayoutTest/blob/main/img/Out_2.png?raw=true)
 
 Из приведённых выше результатов можно сделать вывод, что наиболее сбалансированой относительно нагрузки на пальцы раскладкой является раскладка 2 - русский фонетический.
 
-
 В случае возниконвени вопросов не ругайте разработчиков, ведь их команда выглядела примерно так:
-![[img/meme_2.jpg]]
+![картинка](https://github.com/Aknoglorik/KeyboardLayoutTest/blob/main/img/meme_2.jpg?raw=true)
